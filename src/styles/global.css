@@ -54,3 +54,20 @@ main { padding-block: var(--space-5) var(--space-6); }
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
+
+/* Tablas del contenido Markdown (casos de estudio) */
+table {
+  display: block;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  margin-block: var(--space-4);
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  min-width: 12rem;
+}
+th { background: var(--color-surface); }
