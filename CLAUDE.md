@@ -1,6 +1,6 @@
 # Contexto para Claude Code
 
-Portfolio personal de Mauro Aguilar (estudiante de Ingeniería de Software, Argentina). Objetivo: aprender, mostrar proyectos y conseguir clientes freelance.
+Portfolio personal de Mauro Aguilar (estudiante de Ingeniería en Sistemas, Argentina). Objetivo: aprender, mostrar proyectos y conseguir clientes freelance.
 El usuario escribe en español rioplatense; respondé en español.
 
 ## Decisiones tomadas

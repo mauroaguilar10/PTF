@@ -18,7 +18,7 @@ const featured = (await getCollection('projects', (p) => p.id.startsWith(`${lang
 
 <BaseLayout lang={lang} alternatePath={path('home', otherLang(lang))}>
   <section class="hero">
-    <p class="muted">{t('site.role')}</p>
+    <p class="muted">{t('home.kicker')}</p>
     <h1>{t('home.hello')}</h1>
     <p class="pitch">{t('home.pitch')}</p>
     <div class="actions">
