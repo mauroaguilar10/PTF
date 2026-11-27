@@ -1,0 +1,80 @@
+---
+import type { Lang } from '../i18n/ui';
+import { useTranslations } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const accessKey = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? '';
+---
+
+<form
+  class="form"
+  data-contact-form
+  data-sending={t('form.sending')}
+  data-ok={t('form.ok')}
+  data-error={t('form.error')}
+  data-nokey={t('form.nokey')}
+>
+  <input type="hidden" name="access_key" value={accessKey} />
+  <input type="hidden" name="subject" value={`Nuevo contacto desde mauroaglr (${lang})`} />
+  <!-- Trampa para bots: los humanos no ven este campo -->
+  <input type="checkbox" name="botcheck" class="visually-hidden" tabindex="-1" autocomplete="off" />
+
+  <label>
+    {t('form.name')}
+    <input name="name" required autocomplete="name" />
+  </label>
+  <label>
+    {t('form.email')}
+    <input name="email" type="email" required autocomplete="email" />
+  </label>
+  <label>
+    {t('form.type')}
+    <select name="project_type">
+      <option>{t('form.type.landing')}</option>
+      <option>{t('form.type.website')}</option>
+      <option>{t('form.type.system')}</option>
+      <option>{t('form.type.other')}</option>
+    </select>
+  </label>
+  <label>
+    {t('form.budget')}
+    <select name="budget">
+      <option>{t('form.budget.unknown')}</option>
+      <option>&lt; 300</option>
+      <option>300 – 800</option>
+      <option>800 – 2000</option>
+      <option>&gt; 2000</option>
+    </select>
+  </label>
+  <label>
+    {t('form.message')}
+    <textarea name="message" rows="5" required></textarea>
+  </label>
+
+  <button class="button" type="submit">{t('form.send')}</button>
+  <p class="status" data-status role="status" aria-live="polite"></p>
+</form>
+
+<script src="../scripts/contact.js"></script>
+
+<style>
+  .form { display: grid; gap: var(--space-3); max-width: 36rem; }
+  label { display: grid; gap: var(--space-1); font-weight: 600; }
+  input, select, textarea {
+    font: inherit;
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: 0.5rem;
+    background: var(--color-bg);
+    color: var(--color-text);
+  }
+  button { justify-self: start; cursor: pointer; }
+  button:disabled { opacity: 0.6; cursor: wait; }
+  .status[data-state='ok'] { color: var(--color-ok); }
+  .status[data-state='error'] { color: var(--color-error); }
+</style>

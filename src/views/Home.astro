@@ -1,0 +1,40 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import type { Lang } from '../i18n/ui';
+import { otherLang, path, useTranslations } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const featured = (await getCollection('projects', (p) => p.id.startsWith(`${lang}/`) && p.data.featured)).sort(
+  (a, b) => a.data.order - b.data.order,
+);
+---
+
+<BaseLayout lang={lang} alternatePath={path('home', otherLang(lang))}>
+  <section class="hero">
+    <p class="muted">{t('site.role')}</p>
+    <h1>{t('home.hello')}</h1>
+    <p class="pitch">{t('home.pitch')}</p>
+    <div class="actions">
+      <a class="button" href={path('contact', lang)}>{t('home.ctaContact')}</a>
+      <a class="button button--ghost" href={path('services', lang)}>{t('home.ctaServices')}</a>
+    </div>
+  </section>
+
+  <h2>{t('home.featured')}</h2>
+  <div class="grid">
+    {featured.map((project) => <ProjectCard project={project} lang={lang} />)}
+  </div>
+</BaseLayout>
+
+<style>
+  .hero { padding-block: var(--space-5); }
+  .pitch { font-size: 1.25rem; max-width: 40rem; }
+  .actions { display: flex; gap: var(--space-3); flex-wrap: wrap; margin-top: var(--space-4); }
+</style>

@@ -1,0 +1,39 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import type { Lang } from '../i18n/ui';
+import { projectPath, useTranslations } from '../i18n/utils';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  lang: Lang;
+}
+
+const { project, lang } = Astro.props;
+const t = useTranslations(lang);
+const slug = project.id.split('/').at(-1)!;
+const { title, summary, status, stack } = project.data;
+---
+
+<article class="card">
+  <span class="status" data-status={status}>{t(`projects.status.${status}`)}</span>
+  <h3><a href={projectPath(slug, lang)}>{title}</a></h3>
+  <p class="muted">{summary}</p>
+  <ul class="stack">{stack.map((item) => <li>{item}</li>)}</ul>
+</article>
+
+<style>
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    padding: var(--space-4);
+  }
+  .card h3 { margin: var(--space-2) 0; }
+  .card h3 a { color: var(--color-text); text-decoration: none; }
+  .card h3 a:hover { color: var(--color-accent); }
+  .status { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-muted); }
+  .status[data-status='publicado'] { color: var(--color-ok); }
+  .status[data-status='en-desarrollo'] { color: var(--color-accent); }
+  .stack { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
+  .stack li { font-size: 0.8rem; border: 1px solid var(--color-border); border-radius: 999px; padding: 0.1rem 0.6rem; }
+</style>

@@ -1,0 +1,37 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import type { Lang } from '../i18n/ui';
+import { otherLang, path, projectPath, useTranslations } from '../i18n/utils';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+  lang: Lang;
+}
+
+const { project, lang } = Astro.props;
+const t = useTranslations(lang);
+const slug = project.id.split('/').at(-1)!;
+const { title, summary, status, stack, demo, repo } = project.data;
+const { Content } = await render(project);
+---
+
+<BaseLayout lang={lang} title={title} description={summary} alternatePath={projectPath(slug, otherLang(lang))}>
+  <a href={path('projects', lang)}>{t('projects.back')}</a>
+  <article>
+    <p class="muted">{t(`projects.status.${status}`)} · {stack.join(' · ')}</p>
+    <h1>{title}</h1>
+    <p class="summary">{summary}</p>
+    <p class="links">
+      {demo && <a class="button" href={demo}>{t('projects.demo')}</a>}
+      {repo && <a class="button button--ghost" href={repo}>{t('projects.repo')}</a>}
+    </p>
+    <Content />
+  </article>
+</BaseLayout>
+
+<style>
+  article { max-width: 44rem; }
+  .summary { font-size: 1.2rem; }
+  .links { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+</style>

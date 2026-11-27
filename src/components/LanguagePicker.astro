@@ -1,0 +1,28 @@
+---
+import type { Lang } from '../i18n/ui';
+import { otherLang, useTranslations } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+  alternatePath: string;
+}
+
+const { lang, alternatePath } = Astro.props;
+const t = useTranslations(lang);
+const target = otherLang(lang);
+---
+
+<a class="lang" href={alternatePath} hreflang={target} lang={target} aria-label={t('lang.switch')}>
+  {target.toUpperCase()}
+</a>
+
+<style>
+  .lang {
+    font-weight: 700;
+    font-size: 0.875rem;
+    text-decoration: none;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    padding: 0.2rem 0.6rem;
+  }
+</style>

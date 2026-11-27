@@ -1,0 +1,45 @@
+---
+import '../styles/global.css';
+import Seo from '../components/Seo.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import type { Lang } from '../i18n/ui';
+import { useTranslations } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+  title?: string; // si falta, usa solo el nombre del sitio
+  description?: string;
+  alternatePath: string; // la misma página en el otro idioma
+}
+
+const { lang, title, description, alternatePath } = Astro.props;
+const t = useTranslations(lang);
+const fullTitle = title ? `${title} · ${t('site.name')}` : `${t('site.name')} · ${t('site.role')}`;
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <Seo title={fullTitle} description={description ?? t('site.description')} lang={lang} alternatePath={alternatePath} />
+    <!-- Aplica el tema antes de pintar la página, para que no parpadee -->
+    <script is:inline>
+      try {
+        const saved = localStorage.getItem('theme');
+        const dark = saved ? saved === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      } catch {}
+    </script>
+    <!-- Etapa 2: pegá acá el script de Cloudflare Web Analytics -->
+  </head>
+  <body>
+    <Header lang={lang} alternatePath={alternatePath} />
+    <main class="container">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+  </body>
+</html>

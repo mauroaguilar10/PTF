@@ -1,0 +1,87 @@
+---
+import type { Lang } from '../i18n/ui';
+import { path, useTranslations } from '../i18n/utils';
+import LanguagePicker from './LanguagePicker.astro';
+
+interface Props {
+  lang: Lang;
+  alternatePath: string;
+}
+
+const { lang, alternatePath } = Astro.props;
+const t = useTranslations(lang);
+const current = Astro.url.pathname.replace(/\/$/, '') || '/';
+
+const links = [
+  { href: path('projects', lang), label: t('nav.projects') },
+  { href: path('services', lang), label: t('nav.services') },
+  { href: path('about', lang), label: t('nav.about') },
+  { href: path('contact', lang), label: t('nav.contact') },
+];
+---
+
+<header class="header">
+  <div class="container bar">
+    <a class="brand" href={path('home', lang)}>{t('site.name')}</a>
+
+    <button class="menu-button" type="button" aria-expanded="false" aria-controls="main-nav" data-menu-toggle>
+      {t('nav.menu')}
+    </button>
+
+    <nav id="main-nav" class="nav" data-menu>
+      <ul>
+        {
+          links.map((link) => (
+            <li>
+              <a href={link.href} aria-current={current.startsWith(link.href) ? 'page' : undefined}>
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <LanguagePicker lang={lang} alternatePath={alternatePath} />
+      <button class="theme" type="button" data-theme-toggle aria-label={t('theme.toggle')}>
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5" /><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor" /></svg>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<script src="../scripts/menu.js"></script>
+<script src="../scripts/theme.js"></script>
+
+<style>
+  .header { border-bottom: 1px solid var(--color-border); }
+  .bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding-block: var(--space-3);
+    flex-wrap: wrap;
+  }
+  .brand { font-weight: 800; text-decoration: none; color: var(--color-text); }
+  .nav { display: none; width: 100%; }
+  .nav[data-open] { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); }
+  .nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
+  .nav a { text-decoration: none; color: var(--color-text); }
+  .nav a[aria-current='page'] { color: var(--color-accent); font-weight: 600; }
+  .menu-button, .theme {
+    background: none;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    padding: 0.3rem 0.8rem;
+    color: var(--color-text);
+    font: inherit;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  @media (min-width: 48rem) {
+    .menu-button { display: none; }
+    .nav, .nav[data-open] { display: flex; flex-direction: row; align-items: center; width: auto; gap: var(--space-4); }
+    .nav ul { flex-direction: row; gap: var(--space-4); }
+  }
+</style>

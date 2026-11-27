@@ -1,0 +1,41 @@
+---
+// Etiquetas para Google y para cuando compartís el enlace (WhatsApp, LinkedIn).
+import type { Lang } from '../i18n/ui';
+
+interface Props {
+  title: string;
+  description: string;
+  lang: Lang;
+  alternatePath: string; // la misma página en el otro idioma
+}
+
+const { title, description, lang, alternatePath } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const alternate = new URL(alternatePath, Astro.site);
+const other = lang === 'es' ? 'en' : 'es';
+const esUrl = lang === 'es' ? canonical : alternate;
+
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Mauro Aguilar',
+  url: Astro.site?.toString(),
+  jobTitle: lang === 'es' ? 'Desarrollador web' : 'Web developer',
+};
+---
+
+<title>{title}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+<link rel="alternate" hreflang={lang} href={canonical} />
+<link rel="alternate" hreflang={other} href={alternate} />
+<link rel="alternate" hreflang="x-default" href={esUrl} />
+
+<meta property="og:type" content="website" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:locale" content={lang === 'es' ? 'es_AR' : 'en_US'} />
+<meta name="twitter:card" content="summary_large_image" />
+
+<script type="application/ld+json" set:html={JSON.stringify(person)} />

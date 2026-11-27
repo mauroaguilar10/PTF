@@ -1,0 +1,15 @@
+# build
+dist/
+.astro/
+
+# dependencias
+node_modules/
+
+# variables de entorno (nunca subir claves)
+.env
+.env.production
+
+# logs y sistema
+npm-debug.log*
+.DS_Store
+Thumbs.db

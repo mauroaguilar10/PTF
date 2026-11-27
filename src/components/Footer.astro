@@ -1,0 +1,32 @@
+---
+import type { Lang } from '../i18n/ui';
+import { useTranslations } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+
+const t = useTranslations(Astro.props.lang);
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="container">
+    <p>© {year} {t('site.name')} · {t('footer.rights')}</p>
+    <p>
+      <a href="https://github.com/mauroaguilar10">GitHub</a>
+      <!-- Sumá tu LinkedIn acá -->
+    </p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--color-border);
+    padding-block: var(--space-4);
+    color: var(--color-muted);
+    font-size: 0.9rem;
+  }
+  .footer .container { display: flex; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); }
+  .footer p { margin: 0; }
+</style>

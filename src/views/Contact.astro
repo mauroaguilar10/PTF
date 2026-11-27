@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ContactForm from '../components/ContactForm.astro';
+import type { Lang } from '../i18n/ui';
+import { otherLang, path, useTranslations } from '../i18n/utils';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<BaseLayout lang={lang} title={t('contact.title')} alternatePath={path('contact', otherLang(lang))}>
+  <h1>{t('contact.title')}</h1>
+  <p class="muted">{t('contact.intro')}</p>
+  <ContactForm lang={lang} />
+</BaseLayout>
