@@ -20,9 +20,12 @@ const links = [
 ];
 ---
 
-<header class="header">
+<header class="header" data-header>
   <div class="container bar">
-    <a class="brand" href={path('home', lang)}>{t('site.name')}</a>
+    <a class="brand" href={path('home', lang)}>
+      <span class="mark" aria-hidden="true">MA</span>
+      {t('site.name')}
+    </a>
 
     <button class="menu-button" type="button" aria-expanded="false" aria-controls="main-nav" data-menu-toggle>
       {t('nav.menu')}
@@ -40,19 +43,33 @@ const links = [
           ))
         }
       </ul>
-      <LanguagePicker lang={lang} alternatePath={alternatePath} />
-      <button class="theme" type="button" data-theme-toggle aria-label={t('theme.toggle')}>
-        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5" /><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor" /></svg>
-      </button>
+      <div class="tools">
+        <LanguagePicker lang={lang} alternatePath={alternatePath} />
+        <button class="theme" type="button" data-theme-toggle aria-label={t('theme.toggle')}>
+          <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"></circle><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"></path></svg>
+        </button>
+      </div>
     </nav>
   </div>
 </header>
 
 <script src="../scripts/menu.js"></script>
 <script src="../scripts/theme.js"></script>
+<script src="../scripts/header.js"></script>
 
 <style>
-  .header { border-bottom: 1px solid var(--color-border); }
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 1px solid transparent;
+    transition: background 0.3s, border-color 0.3s;
+  }
+  .header[data-scrolled] {
+    background: color-mix(in srgb, var(--color-bg) 72%, transparent);
+    backdrop-filter: blur(14px);
+    border-bottom-color: var(--color-border);
+  }
   .bar {
     display: flex;
     align-items: center;
@@ -61,27 +78,64 @@ const links = [
     padding-block: var(--space-3);
     flex-wrap: wrap;
   }
-  .brand { font-weight: 800; text-decoration: none; color: var(--color-text); }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-decoration: none;
+    color: var(--color-text);
+  }
+  .mark {
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.6rem;
+    background: var(--gradient-brand);
+    color: #fff;
+    font-size: 0.8rem;
+    box-shadow: 0 0 20px var(--color-glow);
+  }
   .nav { display: none; width: 100%; }
-  .nav[data-open] { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); }
+  .nav[data-open] {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding-block: var(--space-3);
+  }
   .nav ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: var(--space-2); }
-  .nav a { text-decoration: none; color: var(--color-text); }
-  .nav a[aria-current='page'] { color: var(--color-accent); font-weight: 600; }
+  .nav a { position: relative; text-decoration: none; color: var(--color-muted); transition: color 0.2s; }
+  .nav a:hover, .nav a[aria-current='page'] { color: var(--color-text); }
+  .nav a[aria-current='page']::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -0.35rem;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--gradient-brand);
+  }
+  .tools { display: flex; align-items: center; gap: var(--space-2); }
   .menu-button, .theme {
+    display: inline-flex;
+    align-items: center;
     background: none;
     border: 1px solid var(--color-border);
     border-radius: 999px;
-    padding: 0.3rem 0.8rem;
+    padding: 0.35rem 0.8rem;
     color: var(--color-text);
     font: inherit;
     cursor: pointer;
-    display: inline-flex;
-    align-items: center;
   }
+  .theme:hover, .menu-button:hover { border-color: var(--color-accent-2); }
 
   @media (min-width: 48rem) {
     .menu-button { display: none; }
-    .nav, .nav[data-open] { display: flex; flex-direction: row; align-items: center; width: auto; gap: var(--space-4); }
+    .nav, .nav[data-open] { display: flex; flex-direction: row; align-items: center; width: auto; gap: var(--space-5); padding: 0; }
     .nav ul { flex-direction: row; gap: var(--space-4); }
   }
 </style>
