@@ -1,16 +1,45 @@
-/* Variables de diseño: cambiá acá colores, tipografía y espacios, y se actualiza todo el sitio. */
-:root {
-  --color-bg: #ffffff;
-  --color-surface: #f4f6fb;
-  --color-text: #14171f;
-  --color-muted: #5b6475;
-  --color-border: #dde2ec;
-  --color-accent: #1f4fd1;
+/*
+  Variables de diseño. Paleta: negros profundos, azules eléctricos y blancos.
+  El tema oscuro es el principal; el claro cambia solo estas variables.
+*/
+:root,
+:root[data-theme='dark'] {
+  --color-bg: #05070d;
+  --color-surface: #0b1120;
+  --color-surface-2: #111a2e;
+  --color-text: #f5f7fb;
+  --color-muted: #94a3b8;
+  --color-border: rgb(148 163 184 / 0.16);
+  --color-accent: #3b82f6;      /* enlaces y detalles */
+  --color-accent-2: #60a5fa;    /* brillos y partículas */
+  --color-accent-strong: #1d4ed8; /* fondos de botones (contraste con blanco) */
   --color-accent-text: #ffffff;
-  --color-ok: #1a7f4b;
-  --color-error: #b42318;
+  --color-glow: rgb(37 99 235 / 0.35);
+  --color-ok: #4ade80;
+  --color-error: #f87171;
+  --gradient-brand: linear-gradient(120deg, #93c5fd 0%, #3b82f6 45%, #1d4ed8 100%);
+}
 
+:root[data-theme='light'] {
+  --color-bg: #ffffff;
+  --color-surface: #f3f6fc;
+  --color-surface-2: #e8eefa;
+  --color-text: #0a1020;
+  --color-muted: #4a5568;
+  --color-border: #d6dfef;
+  --color-accent: #1d4ed8;
+  --color-accent-2: #2563eb;
+  --color-accent-strong: #1d4ed8;
+  --color-accent-text: #ffffff;
+  --color-glow: rgb(37 99 235 / 0.18);
+  --color-ok: #15803d;
+  --color-error: #b91c1c;
+  --gradient-brand: linear-gradient(120deg, #1e3a8a 0%, #1d4ed8 45%, #3b82f6 100%);
+}
+
+:root {
   --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'Space Grotesk Variable', var(--font-sans);
   --font-mono: ui-monospace, 'Cascadia Code', Consolas, monospace;
 
   --space-1: 0.25rem;
@@ -19,20 +48,9 @@
   --space-4: 1.5rem;
   --space-5: 2.5rem;
   --space-6: 4rem;
+  --space-7: 6rem;
 
-  --radius: 0.75rem;
-  --max-width: 68rem;
-}
-
-/* Modo oscuro: lo activa theme.js poniendo data-theme="dark" en <html>. */
-:root[data-theme='dark'] {
-  --color-bg: #0f1218;
-  --color-surface: #181c25;
-  --color-text: #e8ebf2;
-  --color-muted: #9aa3b5;
-  --color-border: #2a303d;
-  --color-accent: #7aa2ff;
-  --color-accent-text: #0f1218;
-  --color-ok: #5fd39a;
-  --color-error: #ff8a80;
+  --radius: 1rem;
+  --max-width: 72rem;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
 }

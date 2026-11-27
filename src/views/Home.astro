@@ -11,30 +11,174 @@ interface Props {
 
 const { lang } = Astro.props;
 const t = useTranslations(lang);
-const featured = (await getCollection('projects', (p) => p.id.startsWith(`${lang}/`) && p.data.featured)).sort(
+const projects = (await getCollection('projects', (p) => p.id.startsWith(`${lang}/`))).sort(
   (a, b) => a.data.order - b.data.order,
 );
+const featured = projects.filter((p) => p.data.featured);
+// Tecnologías sin repetir, sacadas de los proyectos: la cinta crece sola con cada proyecto nuevo.
+const stack = [...new Set(projects.flatMap((p) => p.data.stack))];
 ---
 
 <BaseLayout lang={lang} alternatePath={path('home', otherLang(lang))}>
   <section class="hero">
-    <p class="muted">{t('home.kicker')}</p>
-    <h1>{t('home.hello')}</h1>
-    <p class="pitch">{t('home.pitch')}</p>
-    <div class="actions">
-      <a class="button" href={path('contact', lang)}>{t('home.ctaContact')}</a>
-      <a class="button button--ghost" href={path('services', lang)}>{t('home.ctaServices')}</a>
+    <canvas class="hero-canvas" data-hero-canvas aria-hidden="true"></canvas>
+    <div class="glow glow-1" aria-hidden="true"></div>
+    <div class="glow glow-2" aria-hidden="true"></div>
+
+    <div class="container hero-content">
+      <p class="pill"><span class="dot" aria-hidden="true"></span>{t('home.available')}</p>
+      <p class="kicker">{t('home.kicker')}</p>
+      <h1>
+        {t('home.hello')} <span class="gradient-text">{t('site.name')}</span>
+      </h1>
+      <p class="pitch">{t('home.pitch')}</p>
+      <div class="actions">
+        <a class="button" href={path('contact', lang)}>{t('home.ctaContact')} <span aria-hidden="true">→</span></a>
+        <a class="button button--ghost" href={path('projects', lang)}>{t('nav.projects')}</a>
+      </div>
     </div>
   </section>
 
-  <h2>{t('home.featured')}</h2>
-  <div class="grid">
-    {featured.map((project) => <ProjectCard project={project} lang={lang} />)}
-  </div>
+  <section class="marquee" aria-label={t('home.stack')}>
+    <ul class="track">
+      {stack.map((item) => <li>{item}</li>)}
+    </ul>
+    <ul class="track" aria-hidden="true">
+      {stack.map((item) => <li>{item}</li>)}
+    </ul>
+  </section>
+
+  <section class="featured">
+    <p class="eyebrow" data-reveal>01 · {t('nav.projects')}</p>
+    <h2 data-reveal>{t('home.featured')}</h2>
+    <div class="grid">
+      {featured.map((project, i) => <ProjectCard project={project} lang={lang} delay={i * 120} />)}
+    </div>
+    <p class="more" data-reveal>
+      <a href={path('projects', lang)}>{t('home.allProjects')} →</a>
+    </p>
+  </section>
 </BaseLayout>
 
+<script src="../scripts/hero-canvas.js"></script>
+
 <style>
-  .hero { padding-block: var(--space-5); }
-  .pitch { font-size: 1.25rem; max-width: 40rem; }
-  .actions { display: flex; gap: var(--space-3); flex-wrap: wrap; margin-top: var(--space-4); }
+  /* El hero ocupa todo el ancho de la ventana aunque esté dentro de main.container */
+  .hero {
+    position: relative;
+    isolation: isolate;
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    margin-top: calc(var(--space-5) * -1 - 4.5rem);
+    padding-top: 4.5rem;
+    min-height: min(92svh, 56rem);
+    display: grid;
+    align-items: center;
+    overflow: hidden;
+  }
+  .hero-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; }
+  .hero::after {
+    /* Desvanece el fondo hacia abajo */
+    content: '';
+    position: absolute;
+    inset: auto 0 0;
+    height: 30%;
+    background: linear-gradient(to bottom, transparent, var(--color-bg));
+    z-index: -1;
+  }
+  .glow {
+    position: absolute;
+    z-index: -2;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.55;
+    animation: float 14s ease-in-out infinite alternate;
+  }
+  .glow-1 { width: 32rem; height: 32rem; background: #1d4ed8; top: -10rem; right: -8rem; }
+  .glow-2 { width: 24rem; height: 24rem; background: #0ea5e9; bottom: -6rem; left: -8rem; opacity: 0.3; animation-delay: -7s; }
+  :global([data-theme='light']) .glow { opacity: 0.18; }
+  @keyframes float {
+    to { transform: translate(-4rem, 3rem) scale(1.1); }
+  }
+
+  .hero-content { padding-block: var(--space-6); }
+  .hero-content > * { animation: rise 0.9s var(--ease-out) both; }
+  .hero-content > :nth-child(2) { animation-delay: 0.08s; }
+  .hero-content > :nth-child(3) { animation-delay: 0.16s; }
+  .hero-content > :nth-child(4) { animation-delay: 0.28s; }
+  .hero-content > :nth-child(5) { animation-delay: 0.4s; }
+  @keyframes rise {
+    from { opacity: 0.001; transform: translateY(24px); }
+  }
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    margin: 0 0 var(--space-4);
+    padding: 0.35rem 0.9rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--color-surface) 70%, transparent);
+    backdrop-filter: blur(8px);
+    font-size: 0.85rem;
+    color: var(--color-muted);
+  }
+  .dot {
+    position: relative;
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: var(--color-ok);
+  }
+  .dot::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: var(--color-ok);
+    animation: ping 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+  }
+  @keyframes ping { 75%, 100% { transform: scale(2.6); opacity: 0; } }
+
+  .kicker { margin: 0 0 var(--space-2); font-family: var(--font-mono); font-size: 0.9rem; color: var(--color-accent-2); }
+  h1 { max-width: 14ch; }
+  .pitch { font-size: clamp(1.1rem, 2.2vw, 1.4rem); max-width: 38rem; color: var(--color-muted); margin: 0; }
+  .actions { display: flex; gap: var(--space-3); flex-wrap: wrap; margin-top: var(--space-5); }
+
+  /* Cinta infinita de tecnologías */
+  .marquee {
+    display: flex;
+    overflow: hidden;
+    gap: var(--space-5);
+    padding-block: var(--space-4);
+    border-block: 1px solid var(--color-border);
+    mask-image: linear-gradient(to right, transparent, #000 12%, #000 88%, transparent);
+  }
+  .track {
+    display: flex;
+    flex-shrink: 0;
+    gap: var(--space-5);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-muted);
+    animation: scroll 32s linear infinite;
+  }
+  .track li { white-space: nowrap; }
+  .track li::before { content: '✦'; margin-right: var(--space-5); color: var(--color-accent); font-size: 0.8em; }
+  .marquee:hover .track { animation-play-state: paused; }
+  @keyframes scroll { to { transform: translateX(calc(-100% - var(--space-5))); } }
+
+  .featured { padding-top: var(--space-4); }
+  .more { margin-top: var(--space-5); }
+  .more a { font-weight: 600; text-decoration: none; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .track { flex-wrap: wrap; }
+    .track[aria-hidden='true'] { display: none; }
+  }
 </style>
