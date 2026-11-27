@@ -8,15 +8,21 @@ interface Props {
   lang: Lang;
   page: RouteKey;
   titleKey: UiKey;
-  bodyKey: UiKey;
+  bodyKeys: UiKey[]; // un párrafo por clave
 }
 
-const { lang, page, titleKey, bodyKey } = Astro.props;
+const { lang, page, titleKey, bodyKeys } = Astro.props;
 const t = useTranslations(lang);
 ---
 
 <BaseLayout lang={lang} title={t(titleKey)} alternatePath={path(page, otherLang(lang))}>
   <h1>{t(titleKey)}</h1>
-  <p>{t(bodyKey)}</p>
+  <div class="prose">
+    {bodyKeys.map((key) => <p>{t(key)}</p>)}
+  </div>
   <slot />
 </BaseLayout>
+
+<style>
+  .prose { max-width: 42rem; }
+</style>
